@@ -608,6 +608,51 @@ static void ASReadStreamCallBack
 }
 
 //
+// hintForMIMEType
+//
+// Make a more informed guess on the file type based on the MIME type
+//
+// Parameters:
+//    mimeType - the MIME type
+//
+// returns a file type hint that can be passed to the AudioFileStream
+//
++ (AudioFileTypeID)hintForMIMEType:(NSString *)mimeType
+{
+	AudioFileTypeID fileTypeHint = kAudioFileMP3Type;
+	if ([mimeType isEqual:@"audio/mpeg"])
+	{
+		fileTypeHint = kAudioFileMP3Type;
+	}
+	else if ([mimeType isEqual:@"audio/x-wav"])
+	{
+		fileTypeHint = kAudioFileWAVEType;
+	}
+	else if ([mimeType isEqual:@"audio/x-aiff"])
+	{
+		fileTypeHint = kAudioFileAIFFType;
+	}
+	else if ([mimeType isEqual:@"audio/x-m4a"])
+	{
+		fileTypeHint = kAudioFileM4AType;
+	}
+	else if ([mimeType isEqual:@"audio/mp4"])
+	{
+		fileTypeHint = kAudioFileMPEG4Type;
+	}
+	else if ([mimeType isEqual:@"audio/x-caf"])
+	{
+		fileTypeHint = kAudioFileCAFType;
+	}
+	else if ([mimeType isEqual:@"audio/aac"] || [mimeType isEqual:@"audio/aacp"])
+	{
+		fileTypeHint = kAudioFileAAC_ADTSType;
+	}
+	return fileTypeHint;
+}
+
+
+//
 // openReadStream
 //
 // Open the audioFileStream to parse data and the fileHandle as the data
@@ -1286,22 +1331,16 @@ cleanup:
 		if (!audioFileStream)
 		{
 			//
-			// Attempt to guess the file type from the URL. Reading the MIME type
-			// from the httpHeaders might be a better approach since lots of
-			// URL's don't have the right extension.
+			// Attempt to guess the file type from the httpHeaders MIME type value.
 			//
 			// If you have a fixed file-type, you may want to hardcode this.
 			//
-			if (!self.fileExtension)
-			{
-				self.fileExtension = [[url path] pathExtension];
-			}
 			AudioFileTypeID fileTypeHint =
-				[AudioStreamer hintForFileExtension:self.fileExtension];
-
+      [AudioStreamer hintForMIMEType:[httpHeaders objectForKey:@"Content-Type"]];
+      
 			// create an audio file stream parser
-			err = AudioFileStreamOpen(self, ASPropertyListenerProc, ASPacketsProc, 
-									fileTypeHint, &audioFileStream);
+			err = AudioFileStreamOpen(self, ASPropertyListenerProc, ASPacketsProc,
+                                fileTypeHint, &audioFileStream);
 			if (err)
 			{
 				[self failWithErrorCode:AS_FILE_STREAM_OPEN_FAILED];
