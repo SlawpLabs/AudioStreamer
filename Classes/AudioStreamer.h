@@ -188,6 +188,7 @@ extern NSString * const ASStatusChangedNotification;
 - (BOOL)isIdle;
 - (void)seekToTime:(double)newSeekTime;
 - (double)calculatedBitRate;
+- (NSString *)audioFeedURL;
 
 @end
 

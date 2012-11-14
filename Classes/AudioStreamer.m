@@ -423,8 +423,8 @@ static void ASReadStreamCallBack
 			AudioQueueStop(audioQueue, true);
 		}
 
-		[self presentAlertWithTitle:NSLocalizedStringFromTable(@"File Error", @"Errors", nil)
-							message:NSLocalizedStringFromTable(@"Unable to configure network read stream.", @"Errors", nil)];
+		[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
+							message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
 	}
 }
 
@@ -678,7 +678,7 @@ static void ASReadStreamCallBack
 		if (fileLength > 0 && seekByteOffset > 0)
 		{
 			CFHTTPMessageSetHeaderFieldValue(message, CFSTR("Range"),
-				(CFStringRef)[NSString stringWithFormat:@"bytes=%ld-%ld", seekByteOffset, fileLength]);
+				(CFStringRef)[NSString stringWithFormat:@"bytes=%d-%d", seekByteOffset, fileLength]);
 			discontinuous = YES;
 		}
 		
@@ -696,8 +696,8 @@ static void ASReadStreamCallBack
 			kCFStreamPropertyHTTPShouldAutoredirect,
 			kCFBooleanTrue) == false)
 		{
-			[self presentAlertWithTitle:NSLocalizedStringFromTable(@"File Error", @"Errors", nil)
-								message:NSLocalizedStringFromTable(@"Unable to configure network read stream.", @"Errors", nil)];
+			[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
+								message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
 			return NO;
 		}
 		
@@ -737,8 +737,8 @@ static void ASReadStreamCallBack
 		if (!CFReadStreamOpen(stream))
 		{
 			CFRelease(stream);
-			[self presentAlertWithTitle:NSLocalizedStringFromTable(@"File Error", @"Errors", nil)
-								message:NSLocalizedStringFromTable(@"Unable to configure network read stream.", @"Errors", nil)];
+			[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
+								message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
 			return NO;
 		}
 		
@@ -1999,6 +1999,10 @@ cleanup:
 	}
 }
 #endif
+
+- (NSString *)audioFeedURL {
+  return url.absoluteString;
+}
 
 @end
 
