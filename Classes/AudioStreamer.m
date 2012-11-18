@@ -173,7 +173,10 @@ static void ASAudioQueueIsRunningCallback(void *inUserData, AudioQueueRef inAQ, 
 static void ASAudioSessionInterruptionListener(void *inClientData, UInt32 inInterruptionState)
 {
 	AudioStreamer* streamer = (AudioStreamer *)inClientData;
-	[streamer handleInterruptionChangeToState:inInterruptionState];
+  @try {
+    [streamer handleInterruptionChangeToState:inInterruptionState];
+  }
+  @catch (NSException *exception) { }
 }
 #endif
 
@@ -195,7 +198,10 @@ static void ASReadStreamCallBack
 )
 {
 	AudioStreamer* streamer = (AudioStreamer *)inClientInfo;
-	[streamer handleReadFromStream:aStream eventType:eventType];
+  @try {
+    [streamer handleReadFromStream:aStream eventType:eventType];
+  }
+  @catch (NSException *exception) { }
 }
 
 @implementation AudioStreamer
