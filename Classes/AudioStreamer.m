@@ -410,14 +410,18 @@ static void ASReadStreamCallBack
 		if (err)
 		{
 			char *errChars = (char *)&err;
+#ifdef DEBUG
 			NSLog(@"%@ err: %c%c%c%c %d\n",
 				[AudioStreamer stringForErrorCode:anErrorCode],
 				errChars[3], errChars[2], errChars[1], errChars[0],
-				(int)err);
+            (int)err);
+#endif
 		}
 		else
 		{
+#ifdef DEBUG
 			NSLog(@"%@", [AudioStreamer stringForErrorCode:anErrorCode]);
+#endif
 		}
 
 		if (state == AS_PLAYING ||
@@ -799,7 +803,9 @@ static void ASReadStreamCallBack
 			if (state != AS_STOPPING &&
 				state != AS_STOPPED)
 			{
+#ifdef DEBUG
 				NSLog(@"### Not starting audio thread. State code is: %ld", (long)state);
+#endif
 			}
 			self.state = AS_INITIALIZED;
 			[pool release];
@@ -1965,7 +1971,9 @@ cleanup:
 			}
 			else
 			{
+#ifdef DEBUG
 				NSLog(@"AudioQueue changed state in unexpected way.");
+#endif
 			}
 		}
 	}
