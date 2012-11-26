@@ -823,7 +823,7 @@ static void ASReadStreamCallBack
 			ASAudioSessionInterruptionListener,  // a reference to your interruption callback
 			self                       // data to pass to your interruption listener callback
 		);
-		UInt32 sessionCategory = kAudioSessionCategory_MediaPlayback;
+		UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
 		AudioSessionSetProperty (
 			kAudioSessionProperty_AudioCategory,
 			sizeof (sessionCategory),
