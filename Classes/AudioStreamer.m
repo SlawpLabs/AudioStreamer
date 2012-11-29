@@ -817,12 +817,13 @@ static void ASReadStreamCallBack
 		// Set the audio session category so that we continue to play if the
 		// iPhone/iPod auto-locks.
 		//
-		AudioSessionInitialize (
-			NULL,                          // 'NULL' to use the default (main) run loop
-			NULL,                          // 'NULL' to use the default run loop mode
-			ASAudioSessionInterruptionListener,  // a reference to your interruption callback
-			self                       // data to pass to your interruption listener callback
-		);
+    // This should (and is now) be called when opening the application, as the AudioStreamer is not a singleton.
+//		AudioSessionInitialize (
+//			NULL,                          // 'NULL' to use the default (main) run loop
+//			NULL,                          // 'NULL' to use the default run loop mode
+//			ASAudioSessionInterruptionListener,  // a reference to your interruption callback
+//			self                       // data to pass to your interruption listener callback
+//		);
 		UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
 		AudioSessionSetProperty (
 			kAudioSessionProperty_AudioCategory,
