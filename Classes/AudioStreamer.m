@@ -149,7 +149,11 @@ static void ASAudioQueueOutputCallback(void*				inClientData,
 	// this is called by the audio queue when it has finished decoding our data. 
 	// The buffer is now free to be reused.
 	AudioStreamer* streamer = (AudioStreamer*)inClientData;
-	[streamer handleBufferCompleteForQueue:inAQ buffer:inBuffer];
+  @try {
+    [streamer handleBufferCompleteForQueue:inAQ buffer:inBuffer];
+  }
+  @catch (NSException *exception) {
+  }
 }
 
 //
@@ -236,6 +240,8 @@ static void ASReadStreamCallBack
 - (void)dealloc
 {
 	[self stop];
+  AudioQueueDispose(audioQueue, true);
+  
 	[url release];
 	[fileExtension release];
 	[super dealloc];
@@ -942,7 +948,8 @@ cleanup:
 		//
 //		if (audioQueue)
 //		{
-//			err = AudioQueueDispose(audioQueue, true);
+////			err = AudioQueueDispose(audioQueue, true);
+//      err = AudioQueuePause(audioQueue);
 //			audioQueue = nil;
 //			if (err)
 //			{
