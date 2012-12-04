@@ -30,6 +30,7 @@
 #define BitRateEstimationMinPackets 50
 
 NSString * const ASStatusChangedNotification = @"ASStatusChangedNotification";
+NSString * const ASFailureNotification = @"ASFailureNotification";
 
 NSString * const AS_NO_ERROR_STRING = @"No error.";
 NSString * const AS_FILE_STREAM_GET_PROPERTY_FAILED_STRING = @"File stream get property failed.";
@@ -430,11 +431,21 @@ static void ASReadStreamCallBack
 		{
 			self.state = AS_STOPPING;
 			stopReason = AS_STOPPING_ERROR;
-			AudioQueueStop(audioQueue, true);
+//			AudioQueueStop(audioQueue, true);
 		}
+    
+    // Post a failure notification on the main thread and let the client handle the error.
+    if ([[NSThread currentThread] isEqual:[NSThread mainThread]]) {
+      [self mainThreadStateNotificationWithName:ASFailureNotification];
+    } else {
+      [self
+       performSelectorOnMainThread:@selector(mainThreadStateNotificationWithName:)
+       withObject:ASFailureNotification
+       waitUntilDone:NO];
+    }
 
-		[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
-							message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
+//		[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
+//							message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
 	}
 }
 
@@ -444,11 +455,11 @@ static void ASReadStreamCallBack
 // Method invoked on main thread to send notifications to the main thread's
 // notification center.
 //
-- (void)mainThreadStateNotification
+- (void)mainThreadStateNotificationWithName:(NSString *)notificationName
 {
 	NSNotification *notification =
 		[NSNotification
-			notificationWithName:ASStatusChangedNotification
+			notificationWithName:notificationName
 			object:self];
 	[[NSNotificationCenter defaultCenter]
 		postNotification:notification];
@@ -487,13 +498,13 @@ static void ASReadStreamCallBack
 			
 			if ([[NSThread currentThread] isEqual:[NSThread mainThread]])
 			{
-				[self mainThreadStateNotification];
+				[self mainThreadStateNotificationWithName:ASStatusChangedNotification];
 			}
 			else
 			{
 				[self
-					performSelectorOnMainThread:@selector(mainThreadStateNotification)
-					withObject:nil
+					performSelectorOnMainThread:@selector(mainThreadStateNotificationWithName:)
+					withObject:ASStatusChangedNotification
 					waitUntilDone:NO];
 			}
 		}
@@ -706,8 +717,19 @@ static void ASReadStreamCallBack
 			kCFStreamPropertyHTTPShouldAutoredirect,
 			kCFBooleanTrue) == false)
 		{
-			[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
-								message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
+//			[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
+//								message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
+      
+      // Post a failure notification on the main thread and let the client handle the error.
+      if ([[NSThread currentThread] isEqual:[NSThread mainThread]]) {
+				[self mainThreadStateNotificationWithName:ASFailureNotification];
+			} else {
+				[self
+         performSelectorOnMainThread:@selector(mainThreadStateNotificationWithName:)
+         withObject:ASFailureNotification
+         waitUntilDone:NO];
+			}
+      
 			return NO;
 		}
 		
@@ -747,8 +769,19 @@ static void ASReadStreamCallBack
 		if (!CFReadStreamOpen(stream))
 		{
 			CFRelease(stream);
-			[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
-								message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
+//			[self presentAlertWithTitle:NSLocalizedStringFromTable(@"Erreur audio", @"Errors", nil)
+//								message:NSLocalizedStringFromTable(@"Une erreur est survenue lors de la lecture audio.", @"Errors", nil)];
+      
+      // Post a failure notification on the main thread and let the client handle the error.
+      if ([[NSThread currentThread] isEqual:[NSThread mainThread]]) {
+				[self mainThreadStateNotificationWithName:ASFailureNotification];
+			} else {
+				[self
+         performSelectorOnMainThread:@selector(mainThreadStateNotificationWithName:)
+         withObject:ASFailureNotification
+         waitUntilDone:NO];
+			}
+      
 			return NO;
 		}
 		
@@ -824,12 +857,12 @@ static void ASReadStreamCallBack
 //			ASAudioSessionInterruptionListener,  // a reference to your interruption callback
 //			self                       // data to pass to your interruption listener callback
 //		);
-		UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
-		AudioSessionSetProperty (
-			kAudioSessionProperty_AudioCategory,
-			sizeof (sessionCategory),
-			&sessionCategory
-		);
+//		UInt32 sessionCategory = AVAudioSessionCategoryPlayAndRecord;
+//		AudioSessionSetProperty (
+//			kAudioSessionProperty_AudioCategory,
+//			sizeof (sessionCategory),
+//			&sessionCategory
+//		);
 		AudioSessionSetActive(true);
 	#endif
 	
@@ -867,7 +900,7 @@ static void ASReadStreamCallBack
 		//
 		if (buffersUsed == 0 && self.state == AS_PLAYING)
 		{
-			err = AudioQueuePause(audioQueue);
+//			err = AudioQueuePause(audioQueue);
 			if (err)
 			{
 				[self failWithErrorCode:AS_AUDIO_QUEUE_PAUSE_FAILED];
@@ -907,15 +940,15 @@ cleanup:
 		//
 		// Dispose of the Audio Queue
 		//
-		if (audioQueue)
-		{
-			err = AudioQueueDispose(audioQueue, true);
-			audioQueue = nil;
-			if (err)
-			{
-				[self failWithErrorCode:AS_AUDIO_QUEUE_DISPOSE_FAILED];
-			}
-		}
+//		if (audioQueue)
+//		{
+//			err = AudioQueueDispose(audioQueue, true);
+//			audioQueue = nil;
+//			if (err)
+//			{
+//				[self failWithErrorCode:AS_AUDIO_QUEUE_DISPOSE_FAILED];
+//			}
+//		}
 
 		pthread_mutex_destroy(&queueBuffersMutex);
 		pthread_cond_destroy(&queueBufferReadyCondition);
