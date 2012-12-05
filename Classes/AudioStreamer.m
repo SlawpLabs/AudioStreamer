@@ -240,11 +240,12 @@ static void ASReadStreamCallBack
 - (void)dealloc
 {
 	[self stop];
-  AudioQueueDispose(audioQueue, true);
   
 	[url release];
 	[fileExtension release];
 	[super dealloc];
+  
+  AudioQueueDispose(audioQueue, false);
 }
 
 //
@@ -871,7 +872,7 @@ static void ASReadStreamCallBack
 //		);
 		AudioSessionSetActive(true);
 	#endif
-	
+    
 		// initialize a mutex and condition so that we can block on buffers in use.
 		pthread_mutex_init(&queueBuffersMutex, NULL);
 		pthread_cond_init(&queueBufferReadyCondition, NULL);
