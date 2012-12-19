@@ -44,7 +44,7 @@
 								// to zero too often, this value may need to
 								// increase. Min 3, typical 8-24.
 								
-#define kAQDefaultBufSize 2048	// Number of bytes in each audio queue buffer
+#define kAQDefaultBufSize 3072	// Number of bytes in each audio queue buffer
 								// Needs to be big enough to hold a packet of
 								// audio from the audio file. If number is too
 								// large, queuing of audio before playback starts
