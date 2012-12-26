@@ -599,7 +599,7 @@ static void ASReadStreamCallBack
 //
 + (AudioFileTypeID)hintForFileExtension:(NSString *)fileExtension
 {
-	AudioFileTypeID fileTypeHint = kAudioFileAAC_ADTSType;
+	AudioFileTypeID fileTypeHint = kAudioFileMP3Type;
 	if ([fileExtension isEqual:@"mp3"])
 	{
 		fileTypeHint = kAudioFileMP3Type;
