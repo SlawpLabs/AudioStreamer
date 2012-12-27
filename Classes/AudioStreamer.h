@@ -183,6 +183,7 @@ extern NSString * const ASFailureNotification;
 - (void)start;
 - (void)stop;
 - (void)pause;
+- (void)resume;
 - (BOOL)isPlaying;
 - (BOOL)isPaused;
 - (BOOL)isWaiting;

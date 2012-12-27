@@ -438,7 +438,7 @@ static void ASReadStreamCallBack
 		{
 			self.state = AS_STOPPING;
 			stopReason = AS_STOPPING_ERROR;
-//			AudioQueueStop(audioQueue, true);
+			AudioQueueStop(audioQueue, true);
 		}
     
     // Post a failure notification on the main thread and let the client handle the error.
@@ -1215,8 +1215,13 @@ cleanup:
 			}
 			self.state = AS_PAUSED;
 		}
-		else if (state == AS_PAUSED)
-		{
+  }
+}
+
+- (void)resume {
+	@synchronized(self) {
+		if (state == AS_PAUSED) {
+      // This is actually resume
 			err = AudioQueueStart(audioQueue, NULL);
 			if (err)
 			{
