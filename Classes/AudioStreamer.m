@@ -907,7 +907,7 @@ static void ASReadStreamCallBack
 		//
 		if (buffersUsed == 0 && self.state == AS_PLAYING)
 		{
-//			err = AudioQueuePause(audioQueue);
+			err = AudioQueuePause(audioQueue);
 			if (err)
 			{
 				[self failWithErrorCode:AS_AUDIO_QUEUE_PAUSE_FAILED];
@@ -992,7 +992,7 @@ cleanup:
 	{
 		if (state == AS_PAUSED)
 		{
-			[self pause];
+			[self resume];
 		}
 		else if (state == AS_INITIALIZED)
 		{
