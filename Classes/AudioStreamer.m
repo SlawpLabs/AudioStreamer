@@ -438,7 +438,7 @@ static void ASReadStreamCallBack
 		{
 			self.state = AS_STOPPING;
 			stopReason = AS_STOPPING_ERROR;
-			AudioQueueStop(audioQueue, true);
+//			AudioQueueStop(audioQueue, true);
 		}
     
     // Post a failure notification on the main thread and let the client handle the error.
