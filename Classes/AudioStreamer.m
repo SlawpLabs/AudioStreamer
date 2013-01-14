@@ -1397,6 +1397,10 @@ cleanup:
 			AudioFileTypeID fileTypeHint =
       [AudioStreamer hintForMIMEType:[httpHeaders objectForKey:@"Content-Type"]];
       
+#ifdef DEBUG
+//      fileTypeHint = kAudioFileAAC_ADTSType;
+#endif
+      
 			// create an audio file stream parser
 			err = AudioFileStreamOpen(self, ASPropertyListenerProc, ASPacketsProc,
                                 fileTypeHint, &audioFileStream);
@@ -1420,8 +1424,11 @@ cleanup:
 			// Read the bytes from the stream
 			//
 			length = CFReadStreamRead(stream, bytes, kAQDefaultBufSize);
-			
-			if (length == -1)
+      
+#if LOG_QUEUED_BUFFERS
+			NSLog(@"Read bytes from stream ----------> %ld", length);
+#endif
+      if (length == -1)
 			{
 				[self failWithErrorCode:AS_AUDIO_DATA_NOT_FOUND];
 				return;
@@ -1476,6 +1483,9 @@ cleanup:
 		
 		inuse[fillBufferIndex] = true;		// set in use flag
 		buffersUsed++;
+#if LOG_QUEUED_BUFFERS
+    NSLog(@"Queuing new buffer: %d", buffersUsed);
+#endif
 
 		// enqueue buffer
 		AudioQueueBufferRef fillBuf = audioQueueBuffer[fillBufferIndex];
@@ -1507,7 +1517,7 @@ cleanup:
 			// AudioFileStream stays a small amount ahead of the AudioQueue to
 			// avoid an audio glitch playing streaming files on iPhone SDKs < 3.0
 			//
-			if (state == AS_FLUSHING_EOF || buffersUsed == kNumAQBufs - 1)
+			if (state == AS_FLUSHING_EOF || buffersUsed == (kNumAQBufs / 2))
 			{
 				if (self.state == AS_BUFFERING)
 				{
