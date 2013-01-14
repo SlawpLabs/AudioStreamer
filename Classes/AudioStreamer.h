@@ -36,7 +36,7 @@
 								// Needs to be big enough to keep audio pipeline
 								// busy (non-zero number of queued buffers) but
 								// not so big that audio takes too long to begin
-								// (kNumAQBufs * kAQBufSize of data must be
+								// ((kNumAQBufs / 2) * kAQBufSize) of data must be
 								// loaded before playback will start).
 								//
 								// Set LOG_QUEUED_BUFFERS to 1 to log how many
