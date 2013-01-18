@@ -30,7 +30,7 @@
 #include <pthread.h>
 #include <AudioToolbox/AudioToolbox.h>
 
-#define LOG_QUEUED_BUFFERS 0
+#define LOG_QUEUED_BUFFERS 1
 
 #define kNumAQBufs 64			// Number of audio queue buffers we allocate.
 								// Needs to be big enough to keep audio pipeline
